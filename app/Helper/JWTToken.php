@@ -12,6 +12,20 @@ use Firebase\JWT\Key;
 
 class JWTToken{
 
+    public static function CreateOtpToken($email){
+
+        $key = env('JWT_KEY');
+
+        $payload = [
+            'iss'=>"pos",
+            'iat'=>time(),
+            'exp'=>time()+60*5,
+            'email'=>$email
+        ];
+
+        return JWT::encode($payload,$key,"HS256");
+    }
+
     public static function createToken($email){
 
         $key = env('JWT_KEY');
@@ -33,12 +47,10 @@ class JWTToken{
        try{
         $decode = JWT::decode($token,new Key($key,'HS256'));
 
-        return $decode;
+        return $decode->email;
        }
        catch(Exception $e){
-        return response()->json([
-            'status'=>'unauthorized'
-            ]);
+        return "unauthorized";
        }
     }
 }
