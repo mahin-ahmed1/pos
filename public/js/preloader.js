@@ -1,104 +1,97 @@
-/**
- * Plugin: Harold Loader
- * Author: Peter Morrison
- * Created: 2014-09-24
- * Updated: 2014-09-25
- * Version: 0.1.0
-*/
+//
+// Fake Loader
+//
+window.FakeLoader = (function($, window, document) {
 
-(function($) 
-{
-
-    $.fn.harold = function(options) 
-    {
-
-        // Plugin defaults
-        var defaults = 
-        {
-            background: '#44AEE3', 
-            fadeSpeed: 200,
-            left: 0,
-            loader: '.progress',
-            padding: 2,
-            position: 'fixed',
-            top: 0,
-            width: $(window).width(),
-            padding: 2
-        };
-
-        // Plugin settings.
-        var settings = $.extend(
-        {
-            background: defaults.background,
-            fadeSpeed: defaults.fadeSpeed,
-            left: defaults.left,
-            loader: defaults.loader,
-            padding: defaults.padding,
-            position: defaults.position,
-            top: defaults.top,
-            width: defaults.width
-        }, options);
-
-        // Progress bar CSS background.
-        var background = settings.background;
-
-        // Progress bar and content fade in speed.
-        var fadeSpeed = settings.fadeSpeed;
-
-        // Progress bar CSS spacing from left of window.
-        var left = settings.left;
-
-        // Progress bar element identifier, class or id.
-        var loader = settings.loader;
-
-        // Progress bar CSS padding.
-        var padding = settings.padding;
-
-        // Progress bar CSS position.
-        var position = settings.position;
-
-        // Progress bar CSS spacing from top of window.
-        var top = settings.top;
-
-        // Progress bar load to window width.
-        var width = settings.width;
-
-        // Content element class or id selector.
-        var selector = this.selector;
-
-        // Set the CSS styling of the loader.
-        $(loader).css(
-        {
-            'background': background,
-            'left': left, 
-            'padding-top': padding,
-            'padding-right': 0,
-            'padding-bottom': padding,
-            'padding-left': 0,
-            'position': position,
-            'top': top
-        });
-
-        /**
-         * Harold inializer.
-        */
-        init = function(selector)
-        {
-            $(selector).click(function(event) {
-                event.preventDefault();
-            });
-
-            $(selector).click(function() {
-                var href = $(this).attr('href');
-
-                $(loader).stop().animate({width: $(window).width()}, fadeSpeed).fadeOut(fadeSpeed, function() {
-                    window.location.href = href;
-                });
-            });
+    var settings = {
+      auto_hide: true,
+      overlay_id: 'fakeloader-overlay',
+      fade_timeout: 200,
+      wait_for_images: true,
+      wait_for_images_selector: 'body'
+    }
+  
+    var $overlay = null;
+  
+    var fakeLoader = {
+  
+      hideOverlay: function() {
+        $overlay.removeClass('visible');
+  
+        window.setTimeout(
+          function() {
+            $overlay.addClass('hidden');
+          }, 
+          settings.fade_timeout
+        );
+      },
+  
+      showOverlay: function() {
+        $overlay.removeClass('hidden').addClass('visible');
+      },
+  
+      init: function( given_settings ) {
+  
+        $.extend( settings, given_settings );
+  
+        if ( $('#' + settings.overlay_id).length <= 0 ) {
+          $overlay = $('<div id="' + settings.overlay_id + '" class="visible incoming"><div class="loader-wrapper-outer"><div class="loader-wrapper-inner"><div class="loader"></div></div></div></div>');
+          $('body').append($overlay);
+  
+          if (typeof(console) !== 'undefined' && typeof(console.log) !== 'undefined') {
+            console.log( "You should put the fakeLoader loading overlay element in your markup directly for best results." );
+          }
         }
+        else {
+          $overlay = $('#' + settings.overlay_id);
+        }
+  
+        $overlay.click(
+          function() {
+            fakeLoader.hideOverlay();
+          }
+        );
+  
+        $(window).bind('beforeunload', function() {
+  
+          $('#' + settings.overlay_id).removeClass('incoming').addClass('outgoing');
+          fakeLoader.showOverlay();
+  
+        });
+  
+        $(document).ready(
+          function() {
+            if ( settings.auto_hide == true ) {
+              if ( typeof($.fn.waitForImages) == 'function' && settings.wait_for_images == true) {
+                $(settings.wait_for_images_selector).waitForImages(
+                  function() {
+                    fakeLoader.hideOverlay();
+                  }
+                ) 
+  
+              }
+              else {
+                fakeLoader.hideOverlay();
+              }
+            }
+          }
+        );
+  
+      }
+  
+    }
+  
+    return fakeLoader;
+  
+  })(jQuery, window, document);
 
-        // Initialize the progress loader.
-        init(selector);
-    };
 
-}(jQuery));
+  function showLoader() {
+    $('#fakeloader-overlay').addClass('visible');
+    $('#fakeloader-overlay').css('display', 'block');
+}
+
+function hideLoader() {
+    $('#fakeloader-overlay').removeClass('visible');
+    $('#fakeloader-overlay').css('display', 'none');
+}

@@ -25,7 +25,14 @@
 
 <body>
 	<main class="d-flex w-100 content">
-		<div class="harold-loader"></div>
+		<div id="fakeloader-overlay" style="display:none;"class=" incoming">
+			<div class="loader-wrapper-outer">
+			  <div class="loader-wrapper-inner">
+				<div class="loader"></div>
+			  </div>
+			</div>
+		  </div>
+
 		@yield('content')
 	</main>
 

@@ -63,10 +63,11 @@
                 'message':'Password is required',
                 'type':'info'
             });
-
-           
-            
         
+
+            showLoader();
+
+         
     }
 }
 </script>
