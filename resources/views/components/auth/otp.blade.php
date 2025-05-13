@@ -5,21 +5,50 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="m-sm-3">
-                            <form>
+                            <form onsubmit="event.preventDefault();">
                                 <div class="mb-3">
                                     <label class="form-label">OTP</label>
-                                    <input class="form-control form-control-lg" type="text" name="otp" placeholder="O T P" />
+                                    <input class="form-control form-control-lg" type="text" id="otp" name="otp" placeholder="O T P" />
                                 </div>
-                                
+
                                 <div class="d-grid gap-2 mt-3">
-                                    <a href="index.html" class="btn btn-lg btn-primary">Submit</a>
+                                    <button type="button" class="btn btn-lg btn-primary" onclick="submitOTP()">Submit</button>
+
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
 </div>
+<script>
+
+    async function submitOTP(){
+
+        let otp = document.getElementById('otp').value;
+        let email = sessionStorage.getItem('email');
+
+        if(otp.length==0){
+            $.toast({message:'OTP cannot by empty',type:'error'});
+        }else{
+            showLoader();
+
+            try{
+                let res = await axios.post('/verify-otp',{
+                    email:email,
+                    otp:otp
+                });
+
+                hideLoader();
+                if(res.data['status']=='success'){
+                    window.location.href="/set-password";
+                }
+            }catch(error){
+                $.toast({message:'OTP Verification failed',type:'error'});
+            }
+        }
+    }
+</script>

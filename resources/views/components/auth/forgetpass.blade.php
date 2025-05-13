@@ -5,21 +5,56 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="m-sm-3">
-                            <form>
+                            <form onsubmit="event.preventDefault();">
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
+                                    <input class="form-control form-control-lg" type="email" id="email" name="email" placeholder="Enter your email" />
                                 </div>
-                                
+
                                 <div class="d-grid gap-2 mt-3">
-                                    <a href="index.html" class="btn btn-lg btn-primary">Submit</a>
+                                    <button class="btn btn-lg btn-primary" onclick="submitEmail()">Submit</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
 </div>
+
+<script>
+
+    async function submitEmail(){
+
+        let email = document.getElementById('email').value;
+
+        if(email.length==0){
+            $.toast({message:"Email is required",type:'error'});
+        }else{
+
+            showLoader();
+            try{
+                let res = await axios.post('/send-otp',{
+                email:email
+                });
+                hideLoader();
+
+                if(res.data['status']=='success'){
+                    sessionStorage.setItem('email',email);
+                    $.toast({message:"OTP Sent",type:'success'});
+                    setTimeout(() => {
+                        window.location.href="/submit-otp"
+                    }, 2000);
+                }else{
+                    $.toast({message:"Email does not exist",type:'error'});
+                }
+            }catch(error){
+                hideLoader();
+                $.toast({message:"Email Does not exist",type:'error'});
+            }
+        }
+    }
+
+</script>

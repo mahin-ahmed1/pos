@@ -39,3 +39,4 @@ Route::get('/signup',[UserController::class,'signup']);
 Route::get('/forget',[UserController::class,'forget']);
 Route::get('/submit-otp',[UserController::class,'otpSubmit']);
 Route::get('/set-password',[UserController::class,'setPassword']);
+Route::get('/dashboard',[UserController::class,'dashboard']);

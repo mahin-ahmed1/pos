@@ -59,10 +59,13 @@ class UserController  extends Controller
             return response()->json([
             'status'=>'success',
             'token'=>$token
-            ]);
+            ],200)->cookie('token',$token,time()+60*60);
         }else{
 
-            return 'username or password did not match';
+            return response()->json([
+                'status'=>'failed',
+                'message'=>'username and password did not match'
+                ],401);
         }
 
     }
@@ -100,7 +103,10 @@ class UserController  extends Controller
                 ],401);
             }
         }else{
-            return "Email Doesn't Exist";
+            return response()->json([
+                'status'=>"failed",
+                'message'=>"otp send failed"
+            ],401);
         }
     }
 
@@ -124,7 +130,7 @@ class UserController  extends Controller
                 'status'=>'OTP Verified',
                 'message'=> 'OTP verification success',
                 'token'=>$token
-            ]);
+            ],200);
 
            }catch(Exception $e){
 
@@ -142,7 +148,7 @@ class UserController  extends Controller
         }
     }
 
-    ///reset pass 
+    ///reset pass
 
     public function resetPass(Request $req){
 
@@ -182,6 +188,11 @@ class UserController  extends Controller
     public function setPassword(Request $req){
 
         return view('pages.auth.reset-password-page');
+    }
+
+    public function dashboard(Request $req){
+
+        return view('pages.dashboard.dashboard');
     }
 }
 

@@ -32,7 +32,7 @@
                                     <button type="submit" class="btn btn-lg btn-primary" onclick="login()">Sign in</button>
                                 </div>
                             </form>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -46,29 +46,37 @@
 </div>
 
 <script>
-    async function login(){
-
+    async function login() {
         let email = document.getElementById('email').value;
-
         let pass = document.getElementById('password').value;
 
-        if(email.length==0){
-
-            $.toast({
-                'message':'Email is required',
-                'type':'info'
-            });
-        }else if(pass.length==0){
-            $.toast({
-                'message':'Password is required',
-                'type':'info'
-            });
-        
-
+        if (email.length == 0) {
+            $.toast({ message: 'Email is required', type: 'info' });
+        } else if (pass.length == 0) {
+            $.toast({ message: 'Password is required', type: 'info' });
+        } else {
             showLoader();
 
-         
-    }
-}
-</script>
+            try {
+                let res = await axios.post('/user-login', {
+                    email: email,
+                    password: pass
+                });
 
+                if (res.data['status'] == "success") {
+                    hideLoader();
+                    window.location.href="/dashboard";
+                    console.log(res.data.status);
+                } else {
+                    hideLoader();
+                    console.log('failed'); // this will now run if response is not "success"
+                }
+
+            } catch (error) {
+                hideLoader();
+
+                $.toast({ message: 'Invalid email or password', type: 'error' });
+            }
+        }
+    }
+</script>

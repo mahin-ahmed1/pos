@@ -24,7 +24,7 @@
 </head>
 
 <body>
-	<main class="d-flex w-100 content">
+	<main>
 		<div id="fakeloader-overlay" style="display:none;"class=" incoming">
 			<div class="loader-wrapper-outer">
 			  <div class="loader-wrapper-inner">
